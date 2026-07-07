@@ -1,6 +1,6 @@
 #!/bin/bash
 # Claude Code statusline: shows current model, session token usage,
-# session cost, and weekly (7-day) rate limit usage.
+# session (5-hour) and weekly (7-day) rate limit usage.
 # Reads the JSON payload Claude Code pipes to statusLine commands on stdin.
 
 input=$(cat)
@@ -28,10 +28,10 @@ if [ -n "$used_pct" ] && [ "$used_pct" != "null" ]; then
   pct_display=$(printf " (%.0f%% ctx)" "$used_pct")
 fi
 
-cost_usd=$(echo "$input" | jq -r '.cost.total_cost_usd // empty')
-cost_display=""
-if [ -n "$cost_usd" ] && [ "$cost_usd" != "null" ]; then
-  cost_display=$(awk -v c="$cost_usd" 'BEGIN { printf " | $%.2f", c }')
+session_pct=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
+session_display=""
+if [ -n "$session_pct" ] && [ "$session_pct" != "null" ]; then
+  session_display=$(printf " | session %.0f%%" "$session_pct")
 fi
 
 week_pct=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
@@ -42,4 +42,4 @@ fi
 
 # Dim color output, matches Claude Code's default statusline style.
 printf "\033[2m%s\033[0m \033[2m|\033[0m \033[2m%s tok%s%s%s\033[0m\n" \
-  "$model" "$tok_display" "$pct_display" "$cost_display" "$week_display"
+  "$model" "$tok_display" "$pct_display" "$session_display" "$week_display"

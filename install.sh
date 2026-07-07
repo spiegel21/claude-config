@@ -16,6 +16,8 @@ backup_cp() {
 backup_cp CLAUDE.md "$DEST/CLAUDE.md"
 backup_cp settings.json "$DEST/settings.json"
 backup_cp settings.local.json "$DEST/settings.local.json"
+backup_cp statusline-command.sh "$DEST/statusline-command.sh"
+chmod +x "$DEST/statusline-command.sh"
 
 for dir in agents skills commands; do
   mkdir -p "$DEST/$dir"

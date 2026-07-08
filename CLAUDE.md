@@ -69,3 +69,26 @@ Run independent subagents in parallel in a single message. Don't delegate a sing
 lookup you can answer yourself in one or two tool calls — delegation has overhead too.
 For big fan-outs (10+ agents, migrations, exhaustive audits), propose a Workflow with a
 rough cost estimate and let me approve it.
+
+### Opus-backed planning for complex tasks
+
+Even when the active session model isn't Opus, run planning/orchestration for complex or
+multi-step tasks through Opus specifically. Before executing, spawn an agent via the Agent
+tool with `model: "opus"` to decompose the task and decide the delegation plan (which
+subagents, what order, what's parallel vs sequential). The session model then handles
+synthesis, talks to me, and dispatches the scout/executor/verifier subagents per that plan.
+Skip this extra pass for simple, single-step requests — only tasks complex enough to need
+real decomposition warrant it.
+
+## Personal config sync
+
+My personal Claude Code config is mirrored in the git repo `~/claude-config`
+(github.com/spiegel21/claude-config, branch `main`) — that repo is the source of truth.
+Whenever you edit any of the tracked files in `~/.claude` — `CLAUDE.md`, `settings.json`,
+`settings.local.json`, `statusline-command.sh`, `agents/`, `skills/`, `commands/`,
+`hooks/`, or this machine's `projects/<project-key>/memory/` — run `~/claude-config/sync.sh`
+afterward to mirror the change into the repo and push it to `origin/main`. This is
+pre-approved standing authorization: don't ask before pushing, it's my own personal repo
+and the script only pushes if there's an actual diff. A PostToolUse hook also does this
+automatically after Edit/Write to those paths, so manual runs are a backstop, not the
+primary mechanism.

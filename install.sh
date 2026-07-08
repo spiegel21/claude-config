@@ -19,10 +19,11 @@ backup_cp settings.local.json "$DEST/settings.local.json"
 backup_cp statusline-command.sh "$DEST/statusline-command.sh"
 chmod +x "$DEST/statusline-command.sh"
 
-for dir in agents skills commands; do
+for dir in agents skills commands hooks; do
   mkdir -p "$DEST/$dir"
   cp -R "$dir/." "$DEST/$dir/"
 done
+chmod +x "$DEST/hooks/"*.sh 2>/dev/null || true
 
 # Memory is keyed by project path; install for this machine's $HOME project key
 PROJECT_KEY=$(printf '%s' "$HOME" | tr '/' '-')

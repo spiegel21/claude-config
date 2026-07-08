@@ -12,7 +12,17 @@ Personal Claude Code configuration, portable across machines.
 | `agents/` | `~/.claude/agents/` | Custom subagents (scout, executor, verifier, code-reviewer, debugger, pr-author) |
 | `skills/` | `~/.claude/skills/` | Custom skills (handoff-prompt, propose-automations) |
 | `commands/` | `~/.claude/commands/` | Slash commands (ask-output, disk-check, gh-check) |
+| `hooks/` | `~/.claude/hooks/` | Shell hooks (post-edit-sync.sh) |
 | `memory/` | `~/.claude/projects/<project-key>/memory/` | Auto-memory (see note below) |
+
+## Keeping this repo in sync
+
+This repo is the source of truth. `install.sh` copies repo → `~/.claude` (new machine
+setup). `sync.sh` does the reverse: `~/.claude` → repo, then commits and pushes if
+anything changed. A `PostToolUse` hook (`hooks/post-edit-sync.sh`, wired in
+`settings.json`) runs `sync.sh` automatically after any Edit/Write to a tracked config
+path, so day-to-day changes push themselves. Run `./sync.sh` manually if you ever need to
+force a sync.
 
 ## Restore on a new machine
 

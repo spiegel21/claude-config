@@ -7,3 +7,4 @@
 - [Ship GIFs to Slack](ship-gifs-to-slack.md) — post demo GIF to backend/UI Slack channel whenever a feature ships; no Slack integration connected yet
 - [Commit means full process](commit-means-full-process.md) — "commit"/"merge" = go all the way through push, don't stop to ask
 - [cumpli Obsidian vault](cumpli-obsidian-vault.md) — navigate cumpli via docs/vault/Home.md (cross-linked graph); Obsidian installed; slack/ seeded for future ingestion
+- [cumpli vault-sync workflow](cumpli-vault-sync-workflow.md) — cloud GitHub Action auto-syncs the vault on push (all clones); Claude-in-CI gotchas: base-action not claude-code-action, pin claude-sonnet-5

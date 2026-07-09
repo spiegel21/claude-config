@@ -1,13 +1,8 @@
 {
-  "model": "opus",
   "permissions": {
     "defaultMode": "auto"
   },
-  "skipAutoPermissionPrompt": true,
-  "statusLine": {
-    "type": "command",
-    "command": "bash $HOME/.claude/statusline-command.sh"
-  },
+  "model": "opus",
   "hooks": {
     "Notification": [
       {
@@ -43,6 +38,10 @@
       }
     ]
   },
+  "statusLine": {
+    "type": "command",
+    "command": "bash $HOME/.claude/statusline-command.sh"
+  },
   "voice": {
     "enabled": true,
     "mode": "hold"
@@ -51,5 +50,6 @@
   "preferredNotifChannel": "auto",
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
   "voiceEnabled": true
 }

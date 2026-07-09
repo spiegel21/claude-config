@@ -40,3 +40,21 @@ Reaching the sanctions list endpoints (OFAC/UN/EU/UK) from here goes through a
 TLS-intercepting proxy: plain `curl` fails (HTTP 000); use **`curl -kL`** (insecure
 + follow redirects — OFAC/UN 302 to presigned S3/Azure URLs). The production Lambda
 `fetch` won't have this proxy. See [[ci-wait-use-loop]].
+
+**git-over-https lies through this proxy (2026-07-08).** The same TLS proxy caches
+git smart-HTTP `info/refs` GETs, so `git ls-remote`/`git fetch` can return a **stale**
+branch SHA, and `git push` can falsely print **"Everything up-to-date"** (it trusted a
+stale local `refs/remotes/origin/…` tracking ref + cached advert and skipped a real
+push). Symptoms diverge per service (upload-pack vs receive-pack cached separately).
+Reliable moves:
+- **Verify remote truth via the GitHub API, not git:** `TOKEN=$(gh auth token)` then
+  `curl -ksL -H "Authorization: Bearer $TOKEN" ".../git/ref/heads/<branch>?nc=$RANDOM"`
+  (gh itself fails cert verify here — must be `curl -k`; add a random query param to
+  bust cache). This is authoritative.
+- **Force a real push when git thinks it's up-to-date:** reset the stale tracking ref
+  to the API truth (`git update-ref refs/remotes/origin/<branch> <realSHA>`), then
+  `git push -v origin HEAD:refs/heads/<branch>` — verbose shows the actual
+  `POST git-receive-pack` + `a..b` line proving it transferred.
+- Ignore the harmless `failed to store: 100001` (keychain write blocked by sandbox)
+  and `.git/config: Operation not permitted` (`-u` config write) — non-fatal; the ref
+  update is what matters. Push with the sandbox on works; `-u` is what trips it.

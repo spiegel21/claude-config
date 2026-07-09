@@ -64,9 +64,19 @@ stale local `refs/remotes/origin/…` tracking ref + cached advert and skipped a
 push). Symptoms diverge per service (upload-pack vs receive-pack cached separately).
 Reliable moves:
 - **Verify remote truth via the GitHub API, not git:** `TOKEN=$(gh auth token)` then
-  `curl -ksL -H "Authorization: Bearer $TOKEN" ".../git/ref/heads/<branch>?nc=$RANDOM"`
-  (gh itself fails cert verify here — must be `curl -k`; add a random query param to
-  bust cache). This is authoritative.
+  `curl -sL -H "Authorization: Bearer $TOKEN" ".../git/ref/heads/<branch>?nc=$RANDOM"`
+  (add a random query param to bust the proxy cache). This is authoritative.
+- **Prefer a real CA bundle over `-k` (2026-07-08, cleaner + not blocked by the auto-mode
+  security classifier, which denies credentialed `-k` calls).** The proxy's root CA lives in
+  the macOS keychain, so build a bundle and verification actually succeeds — no TLS weakening:
+  ```sh
+  B=$TMPDIR/macos-trust-bundle.pem; : > "$B"
+  security find-certificate -a -p /System/Library/Keychains/SystemRootCertificates.keychain >> "$B"
+  security find-certificate -a -p /Library/Keychains/System.keychain >> "$B"
+  ```
+  Then `SSL_CERT_FILE=$B GIT_SSL_CAINFO=$B gh …` / `SSL_CERT_FILE=$B curl …` — **`gh pr create`,
+  `gh api`, and `curl` all verify (HTTP 200)** with no `-k`. (Building the bundle reads the
+  keychain, which needs the command sandbox off.)
 - **Force a real push when git thinks it's up-to-date:** reset the stale tracking ref
   to the API truth (`git update-ref refs/remotes/origin/<branch> <realSHA>`), then
   `git push -v origin HEAD:refs/heads/<branch>` — verbose shows the actual

@@ -32,11 +32,11 @@ updates show up in the branch's PR diff for review. Went green 2026-07-09 at com
 - **Reuse the existing `secrets.CLAUDE_CODE_OAUTH_TOKEN`** (already used by `claude.yml` /
   `claude-code-review.yml`). No new secret, no Bedrock-OIDC needed.
 - **Repo default workflow permission is `read`, but an explicit `permissions:` block DOES
-  elevate** — the run log's "GITHUB_TOKEN Permissions" group confirmed `Contents: write` +
-  `PullRequests: write` were granted. So push-back to a feature branch works.
-- **`gh pr create` on `main`** additionally needs the org toggle "Allow GitHub Actions to
-  create and approve pull requests" (repo currently `can_approve_pull_request_reviews:false`)
-  — only matters for the main-branch PR path, not feature-branch direct push.
+  elevate** — the run log's "GITHUB_TOKEN Permissions" group confirmed `Contents: write` was
+  granted. So push-back to a feature branch works. (We only need `contents: write` now that
+  the main-PR path is gone; if you ever re-add `gh pr create` you'd also need
+  `pull-requests: write` AND the org toggle "Allow GitHub Actions to create and approve pull
+  requests" — repo currently `can_approve_pull_request_reviews:false`.)
 - **Loop guards (3):** `paths-ignore: docs/vault/**` + push-back via `GITHUB_TOKEN` (never
   re-triggers workflows) + job `if:` skipping the `cumpli-vault-bot` author. Do NOT guard on
   a commit-**message** substring — it skips any commit that merely mentions the marker.

@@ -106,6 +106,21 @@ Practice:
   fresh session seeded from the notes file instead, since that's higher-fidelity than a summary.
   Surface the recommendation with your reasoning; don't silently ride a degraded context.
 
+## Parallel sessions → separate worktrees
+
+When more than one Claude Code session (or task) works a repo at the same time, give each its
+own **`git worktree`** — a separate directory with its own HEAD and index, sharing one object
+store. **Never point two sessions at the same working directory.** Git allows only one HEAD per
+directory, so a shared checkout lets one session's branch switch or commit silently land on the
+other's branch (I've hit this: a commit went to the wrong branch mid-task, and each session's
+work churned the other's). A worktree makes isolation structural — git refuses to check out a
+branch already checked out in another worktree, turning a silent collision into a hard error.
+
+Practice: `git worktree add ../<repo>-<slug> <branch>` (or `-b <new>` off `main`), install deps
+per worktree (cheap — the package store is shared), and mind fixed-port dev servers that would
+collide across worktrees. Script the per-repo setup as a **project skill** when it recurs
+(e.g. cumpli's `/new-worktree`). Clean up with `git worktree remove` / `prune` when merged.
+
 ## Personal config sync
 
 My personal Claude Code config is mirrored in the git repo `~/claude-config`

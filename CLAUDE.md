@@ -80,6 +80,32 @@ synthesis, talks to me, and dispatches the scout/executor/verifier subagents per
 Skip this extra pass for simple, single-step requests — only tasks complex enough to need
 real decomposition warrant it.
 
+### Context management (orchestrator's judgment, not a fixed threshold)
+
+Don't rely on a hardcoded auto-compact percentage. Native auto-compact stays enabled as a
+last-resort safety net near the limit, but as orchestrator you own the context budget and
+decide *deliberately* when to compact — because compaction is a lossy summary, so the goal
+is to compact rarely, at the right moment, with durable state already preserved elsewhere.
+
+Practice:
+
+- **Keep the main context lean by default.** Push heavy, low-signal work down to subagents —
+  long file reads, log/output scans, broad searches. Get back conclusions and `file:line`
+  pointers, not raw dumps. This is the primary lever; done well, it delays compaction far more
+  than any threshold tweak.
+- **Externalize durable state before it can be lost.** For long or accuracy-critical tasks,
+  write the plan, key decisions, and ground-truth facts to a notes/plan file (or the memory
+  dir) *as we go* — don't hold them only in conversation. A lossy summary can't drop what's
+  already on disk.
+- **Decide at safe checkpoints, never mid-step.** Only consider compacting between discrete
+  units of work (a subtask finished, a plan approved), never in the middle of a reasoning
+  chain or an edit sequence.
+- **When context is getting heavy, choose one:** (a) if the thread is still coherent, tell me
+  it's time and recommend `/compact focus on <the specific things to preserve>` with a concrete
+  focus string — I run it; or (b) if we've accumulated a lot of stale exploration, recommend a
+  fresh session seeded from the notes file instead, since that's higher-fidelity than a summary.
+  Surface the recommendation with your reasoning; don't silently ride a degraded context.
+
 ## Personal config sync
 
 My personal Claude Code config is mirrored in the git repo `~/claude-config`

@@ -8,11 +8,16 @@ metadata:
 ---
 
 `.github/workflows/vault-sync.yml` keeps the Obsidian vault ([[cumpli-obsidian-vault]]) in
-sync on every push to `main` + `feat/demo-digest-slack` — cloud-side, so it covers **all
-clones** (reacts to the remote, not a local HEAD). It computes the changed files for the
-push range, runs Claude headless to refresh only the affected notes, then a CI step commits
-them back (direct on feature branches, PR on protected `main`). Went green 2026-07-08 at
-commit `10d6055`.
+sync on every push to **any feature branch** — cloud-side, so it covers **all clones**
+(reacts to the remote, not a local HEAD). Trigger is `branches: ['**', '!main']` (a fixed
+branch list rots — the working branch already changed from `feat/demo-digest-slack` →
+`feat/demo-digest-plain-author`). It computes the changed files for the push range, runs
+Claude headless to refresh only the affected notes, then a CI step commits them back onto
+**the same feature branch**. `main` is deliberately NOT a trigger and the bot never touches
+it: notes reach `main` via the normal tested auto-merge of an already-synced branch, so a
+`main` run would be a redundant no-op (and main is protected). This also means the note
+updates show up in the branch's PR diff for review. Went green 2026-07-09 at commit
+`aac0a3d` (run #6) on the renamed branch — proving the pattern trigger.
 
 **Hard-won gotchas for running Claude in this repo's CI (reuse these):**
 - **Use `anthropics/claude-code-base-action`, NOT `claude-code-action@v1`.** The latter

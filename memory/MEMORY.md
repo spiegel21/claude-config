@@ -8,3 +8,5 @@
 - [Commit means full process](commit-means-full-process.md) — "commit"/"merge" = go all the way through push, don't stop to ask
 - [cumpli Obsidian vault](cumpli-obsidian-vault.md) — navigate cumpli via docs/vault/Home.md; vault-first enforced (CLAUDE.md + session-start hook); Slack context active via /slack-ingest
 - [cumpli vault-sync workflow](cumpli-vault-sync-workflow.md) — cloud GitHub Action auto-syncs the vault on push (all clones); Claude-in-CI gotchas: base-action not claude-code-action, pin claude-sonnet-5
+- [Background orchestrator CI-watch](background-orchestrator-ci-watch.md) — background orchestrator agents stall on phantom "watchers"; drive CI-watch from main via /loop + dispatch fresh executors per fix
+- [cumpli intake e2e specs](cumpli-intake-e2e-specs.md) — changing the intake wizard breaks e2e specs that walk registration (validations.spec/intake-scan); run the FULL web e2e suite

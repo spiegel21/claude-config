@@ -21,9 +21,12 @@ integrations, tests T1–T5, verify loop). Each note is anchored to real file pa
 - Obsidian.app is installed on this Mac (brew cask); the vault is registered — `open -a Obsidian`.
 - **Slack context is ACTIVE (no longer future work):** the **`/slack-ingest`** skill
   (`.claude/skills/slack-ingest/`) distills Slack threads into atomic, wikilinked notes under
-  `docs/vault/slack/decisions|threads` (summaries only, honors I7 — no secrets committed). First
-  ingest seeded from `#all-cumpli`: the vault/graphify decision + the risk-matrix/validations
-  expansion. Slack workspace has `#all-cumpli` (main), `#git`, `#ui`. See [[ship-gifs-to-slack]].
+  `docs/vault/slack/{decisions,threads,minutes}` + `people.md`. **Whole workspace already ingested
+  (2026-07-09)** via a multi-agent workflow: 29 notes total (20 decisions, 5 threads, 3 minutes,
+  people.md), deduped. Workspace = 7 public channels: `#all-cumpli` (main), `#minutes`, `#backend`,
+  `#dev`, `#ui`, `#git` (bot PR digests), `#social`. Re-run `/slack-ingest` for new context. Note:
+  user chose "distill everything as-is" (no redaction) since it's their own team workspace.
+  See [[ship-gifs-to-slack]].
 - Open thread from Slack: whether to layer **graphify** (`graphifyy` — AST→graph, GraphRAG/MCP,
   can export an Obsidian vault) on top of the hand-authored vault — Eduardo wasn't fully sold on
   the by-hand markdown approach.

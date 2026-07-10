@@ -5,7 +5,7 @@
 - [cumpli auto-merge scope](cumpli-automerge-scope.md) — auto-merge handled by repo's own GitHub Actions (auto-merge.yml, verify+e2e gated); don't build a redundant local cron
 - [cumpli local real backend](cumpli-local-real-backend.md) — run real validation API locally (no AWS): dev-server.ts + Postgres.app + dev-auth; 6/12 validations really work free
 - [Ship GIFs to Slack](ship-gifs-to-slack.md) — post demo GIF to backend/UI Slack channel whenever a feature ships; no Slack integration connected yet
-- [Commit means full process](commit-means-full-process.md) — "commit"/"merge" = go all the way through push, don't stop to ask
+- [Commit means full process](commit-means-full-process.md) — "commit"/"merge"/"push" = full flow (commit→push→open PR); don't stop to ask; disable sandbox for gh (TLS proxy)
 - [cumpli Obsidian vault](cumpli-obsidian-vault.md) — navigate cumpli via docs/vault/Home.md; vault-first enforced (CLAUDE.md + session-start hook); Slack context active via /slack-ingest
 - [cumpli vault-sync workflow](cumpli-vault-sync-workflow.md) — cloud GitHub Action auto-syncs the vault on push (all clones); Claude-in-CI gotchas: base-action not claude-code-action, pin claude-sonnet-5
 - [Background orchestrator CI-watch](background-orchestrator-ci-watch.md) — background orchestrator agents stall on phantom "watchers"; drive CI-watch from main via /loop + dispatch fresh executors per fix

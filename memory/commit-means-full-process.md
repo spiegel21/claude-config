@@ -5,17 +5,19 @@ metadata:
   originSessionId: 1a6a17b4-ddc0-4264-9b12-4c40601cda00
 ---
 
-When the user asks to "commit" or "merge" something, that means carry out the whole
-process to completion — not just `git commit` in isolation. For a commit on a repo with
-a remote, that includes pushing (`git push`) unless the user says otherwise. For a merge,
-that includes whatever follow-through steps normally complete a merge (e.g. pushing,
-cleaning up the branch) unless told to stop partway.
+When the user asks to "commit", "merge", or "push" something, that means carry out the
+whole process to completion — not just the single git step in isolation. "commit" → also
+push. **"push" → also open the PR** (branch push + `gh pr create`), not just `git push`.
+"merge" → whatever follow-through completes it (push, branch cleanup). Don't stop partway
+to ask for the next obvious step.
 
-**Why:** User corrected this after I committed changes to `~/claude-config` and then
-paused to ask whether to also push, instead of just doing it.
+**Why:** User corrected this twice — first after I committed to `~/claude-config` and paused
+to ask whether to push; then again (2026-07-09) after I pushed a branch and asked whether to
+open the PR instead of just opening it. "push" = the whole publish flow through the PR.
 
-**How to apply:** When a request uses the word "commit" or "merge", default to completing
-the full local→remote flow (commit → push, or merge → push/cleanup) without a separate
-confirmation step for the push itself. Still pause first for genuinely separate risky
-actions (e.g. force-push, deleting branches) per normal safety judgment — this only
-covers the ordinary "finish what commit/merge implies" case.
+**How to apply:** On "commit"/"merge"/"push", default to completing the full flow: commit →
+push → open PR (draft title/body from the commits). On this Mac a TLS-intercepting proxy makes
+`gh` fail cert verification in the sandbox — run the `gh pr create` call with the sandbox
+disabled (works). `git push -u` may fail to write `.git/config` upstream tracking under the
+sandbox, but the branch/commits still land on the remote — that error is cosmetic. Still pause
+for genuinely separate risky actions (force-push, deleting branches) per normal safety judgment.

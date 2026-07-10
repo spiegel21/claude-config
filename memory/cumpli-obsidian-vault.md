@@ -1,6 +1,6 @@
 ---
 name: cumpli-obsidian-vault
-description: cumpli has an Obsidian knowledge-graph vault at docs/vault — start at Home.md to navigate the repo fast
+description: cumpli has an Obsidian knowledge-graph vault at docs/vault (start at Home.md) — vault-first is enforced via CLAUDE.md + session-start hook; Slack context is active via /slack-ingest
 metadata: 
   node_type: memory
   type: project

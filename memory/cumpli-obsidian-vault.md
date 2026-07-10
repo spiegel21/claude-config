@@ -15,9 +15,16 @@ graph over the codebase, built 2026-07-08. **To navigate cumpli efficiently, rea
 integrations, tests T1–T5, verify loop). Each note is anchored to real file paths.
 
 - The vault *points at* the code; when they disagree, **the code wins** — fix the note in the same change.
-- `cumpli/CLAUDE.md` has a "Navigating the repo — the vault" section pointing here too.
+- **Vault-first is now enforced (2026-07-09):** `cumpli/CLAUDE.md` has a hard "start at the vault
+  first" directive with a per-task procedure, AND `.claude/hooks/session-start.sh` emits a vault +
+  Slack pointer on **every** session (local + remote) — so agents are told to start here each time.
 - Obsidian.app is installed on this Mac (brew cask); the vault is registered — `open -a Obsidian`.
-- **Future work:** `docs/vault/slack/` is seeded for Slack ingestion. The Slack MCP tools
-  (`search_public`/`read_channel`/`read_thread`) are connected, so a `/slack-ingest` skill could
-  distill threads into `decisions/` notes wikilinked to the subsystem they explain. See
-  [[ship-gifs-to-slack]] for the other pending Slack integration.
+- **Slack context is ACTIVE (no longer future work):** the **`/slack-ingest`** skill
+  (`.claude/skills/slack-ingest/`) distills Slack threads into atomic, wikilinked notes under
+  `docs/vault/slack/decisions|threads` (summaries only, honors I7 — no secrets committed). First
+  ingest seeded from `#all-cumpli`: the vault/graphify decision + the risk-matrix/validations
+  expansion. Slack workspace has `#all-cumpli` (main), `#git`, `#ui`. See [[ship-gifs-to-slack]].
+- Open thread from Slack: whether to layer **graphify** (`graphifyy` — AST→graph, GraphRAG/MCP,
+  can export an Obsidian vault) on top of the hand-authored vault — Eduardo wasn't fully sold on
+  the by-hand markdown approach.
+- Config changes committed on branch `claude/vault-slack-config` (not pushed as of 2026-07-09).

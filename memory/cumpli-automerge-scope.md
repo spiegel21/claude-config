@@ -1,6 +1,6 @@
 ---
 name: cumpli-automerge-scope
-description: "cumpli auto-merge is handled by the repo's own GitHub Actions (auto-merge.yml) — do NOT build a redundant local cron"
+description: "cumpli auto-merge is handled by the repo's own GitHub Actions (auto-merge.yml) — do NOT build a redundant local cron; known gap: it never rechecks a PR after main moves from other merges, so green PRs can sit stale — see the diagnosis/fix steps here"
 metadata: 
   node_type: memory
   type: project

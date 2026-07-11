@@ -4,7 +4,11 @@
       "Bash(gh pr *)",
       "WebFetch(domain:api.github.com)",
       "Bash(git config *)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(corepack pnpm@9.15.0 lint)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(tail -30 /tmp_lintout.txt)",
+      "Bash(rm -f /tmp_lintout.txt)"
     ]
   },
   "sandbox": {

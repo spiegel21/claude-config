@@ -11,3 +11,4 @@
 - [Background orchestrator CI-watch](background-orchestrator-ci-watch.md) — background orchestrator agents stall on phantom "watchers"; drive CI-watch from main via /loop + dispatch fresh executors per fix
 - [cumpli intake e2e specs](cumpli-intake-e2e-specs.md) — changing the intake wizard breaks e2e specs that walk registration (validations.spec/intake-scan); run the FULL web e2e suite
 - [cumpli parallel-session gates](cumpli-parallel-session-gates.md) — verify/e2e with parallel sessions: own vite + E2E_BASE_URL (5173/5174 taken), throwaway test DB on Postgres.app 5433, infra tests need shimmed `pnpm -r test`
+- [Connect Outlook outreach — DEFERRED](outlook-outreach-deferred.md) — full "connect your Outlook mailbox" email-outreach design captured but NOT built/activated (sensitive); build-vs-buy still open; target = cumpli-reachout worktree

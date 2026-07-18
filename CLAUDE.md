@@ -106,6 +106,26 @@ Practice:
   fresh session seeded from the notes file instead, since that's higher-fidelity than a summary.
   Surface the recommendation with your reasoning; don't silently ride a degraded context.
 
+### Tool hygiene — the cheap defaults (always on)
+
+The single lever for token cost is **keeping the main context small** — cost is superlinear
+because every turn re-sends the whole accumulated context. Beyond the delegation and context
+rules above, these tactical defaults apply to *every* session without being asked:
+
+- **Dedicated tools, not shell, for reading.** `grep` → **Grep**, `cat`/`head`/`tail` →
+  **Read**, `ls`/`find` → **Glob**. Reserve **Bash** for things that actually run (builds,
+  tests, git, package managers) — not for reading files into context.
+- **Absolute paths, no `cd`.** Run every tool against an absolute path. `cd` inside a compound
+  command can trigger a permission prompt and wastes turns; never `cd`-then-read.
+- **Front-load the map, don't discover it.** If the repo has a knowledge index (an Obsidian
+  vault, `ARCHITECTURE`/`CLAUDE.md`, a docs map), read that and follow its pointers to exact
+  files — one cheap read replaces a dozen exploratory greps that land permanently in context.
+- **Parallelize independent calls.** Batch independent tool calls into one message so they run
+  concurrently — fewer round-trips, less accumulated overhead.
+- **One session per task.** When a task is done, `/clear` before the next unrelated one — a
+  fresh lean context is the cheapest optimization there is. Never let one session sprawl across
+  many unrelated tasks; that is what makes re-read cost compound.
+
 ## Parallel sessions → separate worktrees
 
 When more than one Claude Code session (or task) works a repo at the same time, give each its

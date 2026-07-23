@@ -35,6 +35,30 @@
             "command": "bash $HOME/.claude/hooks/post-edit-sync.sh"
           }
         ]
+      },
+      {
+        "matcher": "EnterWorktree",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/git-sync-on-start.sh",
+            "timeout": 20,
+            "statusMessage": "Syncing worktree with remote..."
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/git-sync-on-start.sh",
+            "timeout": 20,
+            "statusMessage": "Fetching latest from remote..."
+          }
+        ]
       }
     ]
   },

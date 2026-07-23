@@ -141,6 +141,26 @@ per worktree (cheap — the package store is shared), and mind fixed-port dev se
 collide across worktrees. Script the per-repo setup as a **project skill** when it recurs
 (e.g. cumpli's `/new-worktree`). Clean up with `git worktree remove` / `prune` when merged.
 
+### Always start from the latest base
+
+A `SessionStart` hook (and a `PostToolUse` hook on `EnterWorktree`) runs
+`~/.claude/hooks/git-sync-on-start.sh`: it always fetches, and fast-forwards only when it is
+provably safe — upstream exists, tree is clean, HEAD strictly behind, no divergence. It never
+runs a bare `git pull`, because that can open a merge on a feature branch or die halfway on a
+dirty tree.
+
+Act on what it reports; the hook informs, it does not decide:
+
+- **"N behind origin/main"** — the base moved. Reconcile *before* building on it, and prefer
+  merging `origin/main` into the feature branch over rebasing: rebase needs a force-push, and
+  force-pushing a branch another session may be watching is how work gets lost.
+- **"NOT pulled (uncommitted changes / diverged)"** — deliberate. Look at the state and decide;
+  don't reflexively pull.
+- **Silence means in sync.** No news is good news.
+
+The failure this prevents: a branch perfectly in sync with *its own upstream* while the base it
+was cut from has advanced — invisible until something built on it turns out to be stale.
+
 ## Personal config sync
 
 My personal Claude Code config is mirrored in the git repo `~/claude-config`

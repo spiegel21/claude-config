@@ -11,6 +11,10 @@
           {
             "type": "command",
             "command": "jq -r '.message' | xargs -I{} osascript -e 'display notification \"{}\" with title \"Claude Code\" sound name \"Glass\"'"
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.message' | { read -r m; curl -s -d \"$m\" https://ntfy.sh/claude-cc-493c921659 >/dev/null 2>&1 || true; }"
           }
         ]
       }
@@ -22,6 +26,10 @@
           {
             "type": "command",
             "command": "osascript -e 'display notification \"Task finished\" with title \"Claude Code\" sound name \"Submarine\"'"
+          },
+          {
+            "type": "command",
+            "command": "curl -s -d \"Claude Code finished a task\" https://ntfy.sh/claude-cc-493c921659 >/dev/null 2>&1 || true"
           }
         ]
       }

@@ -85,5 +85,8 @@
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "voiceEnabled": true
+  "voiceEnabled": true,
+  "skillOverrides": {
+    "usage-check": "off"
+  }
 }

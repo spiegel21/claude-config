@@ -70,11 +70,11 @@ lookup you can answer yourself in one or two tool calls — delegation has overh
 For big fan-outs (10+ agents, migrations, exhaustive audits), propose a Workflow with a
 rough cost estimate and let me approve it.
 
-### Opus-backed planning for complex tasks
+### Fable-backed planning for complex tasks
 
-Even when the active session model isn't Opus, run planning/orchestration for complex or
-multi-step tasks through Opus specifically. Before executing, spawn an agent via the Agent
-tool with `model: "opus"` to decompose the task and decide the delegation plan (which
+Even when the active session model isn't Fable, run planning/orchestration for complex or
+multi-step tasks through Fable specifically. Before executing, spawn an agent via the Agent
+tool with `model: "fable"` to decompose the task and decide the delegation plan (which
 subagents, what order, what's parallel vs sequential). The session model then handles
 synthesis, talks to me, and dispatches the scout/executor/verifier subagents per that plan.
 Skip this extra pass for simple, single-step requests — only tasks complex enough to need

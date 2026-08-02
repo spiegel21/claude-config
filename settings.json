@@ -3,6 +3,9 @@
     "defaultMode": "auto"
   },
   "model": "fable",
+  "skillOverrides": {
+    "usage-check": "off"
+  },
   "hooks": {
     "Notification": [
       {
@@ -85,8 +88,5 @@
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "voiceEnabled": true,
-  "skillOverrides": {
-    "usage-check": "off"
-  }
+  "voiceEnabled": true
 }

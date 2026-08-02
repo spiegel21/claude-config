@@ -70,7 +70,7 @@ lookup you can answer yourself in one or two tool calls — delegation has overh
 For big fan-outs (10+ agents, migrations, exhaustive audits), propose a Workflow with a
 rough cost estimate and let me approve it.
 
-### Fable-backed planning for complex tasks
+### Dedicated planner agent for complex tasks
 
 Even when the active session model isn't Fable, run planning/orchestration for complex or
 multi-step tasks through Fable specifically. Before executing, spawn an agent via the Agent

@@ -71,6 +71,9 @@
     "type": "command",
     "command": "bash $HOME/.claude/statusline-command.sh"
   },
+  "enabledPlugins": {
+    "mattpocock-skills@claude-plugins-official": true
+  },
   "voice": {
     "enabled": true,
     "mode": "hold"
@@ -82,8 +85,5 @@
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "voiceEnabled": true,
-  "enabledPlugins": {
-    "mattpocock-skills@claude-plugins-official": true
-  }
+  "voiceEnabled": true
 }

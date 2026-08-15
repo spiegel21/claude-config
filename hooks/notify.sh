@@ -95,12 +95,8 @@ title=""; body=""; sound=""; push=1; verdict=""
 case "$event" in
   Stop)
     if [ "$busy" -gt 0 ]; then
-      # Claude ended a RESPONSE, but the terminal still has work running.
-      # Do not claim completion — that is the bug this hook exists to fix.
-      title="⏳ $who"
-      body="Turn ended — $busy still running"
-      sound=""          # silent: nothing for you to do yet
-      push=0            # no phone push for a non-event
+      # Claude ended a RESPONSE, but work is still running. Not a completion,
+      # and nothing for you to do — stay completely silent.
       verdict="stop-suppressed"
     else
       title="✅ $who"
@@ -110,10 +106,25 @@ case "$event" in
     fi
     ;;
   Notification)
-    title="🔔 $who"
-    body="${message:-Claude needs you}"
-    sound="Glass"
-    verdict="notify"
+    # Only the types that genuinely want something from you. Everything else
+    # (auth_success, elicitation_complete/response, agent_completed) is noise —
+    # completion is reported by Stop, once, when nothing is left running.
+    case "${notif_type:-permission_prompt}" in
+      permission_prompt|agent_needs_input|elicitation_dialog|elicitation_url_dialog)
+        title="🔔 $who"; body="${message:-Claude needs you}"; sound="Glass"; verdict="notify"
+        ;;
+      idle_prompt)
+        if in_cooldown "$short-idle"; then
+          verdict="notify-cooldown"
+        else
+          title="🔔 $who"; body="${message:-Claude is waiting for your input}"
+          sound="Glass"; verdict="notify-idle"
+        fi
+        ;;
+      *)
+        verdict="notify-ignored-${notif_type}"
+        ;;
+    esac
     ;;
   *)
     title="· $who"; body="${message:-$event}"; sound=""; verdict="passthrough"

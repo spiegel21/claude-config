@@ -36,6 +36,14 @@ dir="$(basename "${cwd:-$PWD}")"
 branch="$(git -C "${cwd:-$PWD}" rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
 who="$dir${branch:+@$branch} · $short"
 
+notif_type="$(field notification_type)"
+
+# Number of background tasks (shells + subagents) still running. This field is
+# supplied first-party on Stop and is authoritative; the heuristics below are
+# only a fallback for payloads that lack it.
+bg_running="$(jq -r '[(.background_tasks // [])[] | select(.status=="running")] | length' <<<"$payload" 2>/dev/null)"
+bg_present="$(jq -r 'if has("background_tasks") then "yes" else "no" end' <<<"$payload" 2>/dev/null)"
+
 # ------------------------------------------------------------- in-flight? ---
 # Walk up from this hook to the owning `claude` process, then count its live
 # child shells. A non-zero count means work is still running in that terminal.

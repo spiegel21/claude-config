@@ -65,9 +65,29 @@ inflight_from_state() {
   [ -f "$f" ] && jq -r '(.inFlight.tasks // 0) + (.inFlight.queued // 0)' "$f" 2>/dev/null || echo ""
 }
 
-busy="$(inflight_from_state)"; src="state.json"
-if [ -z "$busy" ]; then busy="$(live_shells)"; src="child-shells"; fi
+if [ "$bg_present" = "yes" ]; then
+  busy="$bg_running"; src="background_tasks"
+else
+  busy="$(inflight_from_state)"; src="state.json"
+  if [ -z "$busy" ]; then busy="$(live_shells)"; src="child-shells"; fi
+fi
 [ -z "$busy" ] && { busy=0; src="none"; }
+
+# Repeat idle_prompt events re-fire every few minutes for the same session.
+# Only the first in a window is worth a buzz; a permission prompt is blocking
+# and always fires.
+COOLDOWN_SECS=600
+COOLDOWN_DIR="$HOME/.claude/.notify-cooldown"
+in_cooldown() {
+  local key="$1" f
+  mkdir -p "$COOLDOWN_DIR" 2>/dev/null
+  f="$COOLDOWN_DIR/$key"
+  if [ -f "$f" ]; then
+    local age=$(( $(date +%s) - $(stat -f %m "$f" 2>/dev/null || echo 0) ))
+    [ "$age" -lt "$COOLDOWN_SECS" ] && return 0
+  fi
+  : >"$f"; return 1
+}
 
 # --------------------------------------------------------------- dispatch ---
 title=""; body=""; sound=""; push=1; verdict=""

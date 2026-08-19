@@ -119,7 +119,12 @@ tool loop, and it protects the quality bar instead of trading it away.
 **Hard rules**
 
 - **Never give a Fable agent tools.** If it needs to look something up, the brief was wrong
-  — fix the brief, not the tool grant.
+  — fix the brief, not the tool grant. The frontmatter must be **`tools: []`**, the explicit
+  empty array. This is a trap worth remembering: a bare `tools:` with no value, like an
+  absent key, silently grants **all** tools — Claude Code reports such an agent as
+  "(Tools: All tools)" — and it parses as valid YAML either way, so a syntax check will not
+  catch it. After creating or editing a tool-less agent, **probe it** (ask it to name the
+  tools it was offered) instead of trusting the file or the docs.
 - **Never `subagent_type: "fork"` for a decision.** A fork copies the entire conversation
   *and* forces the parent's model, so it is both the most expensive possible handoff and
   cannot be Fable anyway.

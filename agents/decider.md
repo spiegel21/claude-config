@@ -36,6 +36,10 @@ and nothing else. Name what you need concretely enough that someone can go fetch
 step: a file and what to look for in it, a command and what its output would settle, a
 question and who answers it. "More context" is not an answer.
 
+When you are answering under a **schema** (a workflow decide-stage), don't emit that raw line —
+it would fail validation. Put the same signal in the schema's designated field instead
+(`status: "INSUFFICIENT"` plus the missing-items field), leaving the decision fields empty.
+
 Invoking this is a success, not a failure — it costs one cheap round-trip and it is the only
 thing standing between a thin brief and a confident wrong call. Use it whenever it applies.
 But do not hide behind it: if the brief genuinely supports a decision, decide, even when the

@@ -53,6 +53,9 @@ Prefer the cheapest agent that can do the job:
 - **executor** (sonnet) — apply a change you've already specified precisely (files + spec +
   verification command). Not for open-ended design.
 - **verifier** (haiku) — run tests/builds/linters and report distilled pass/fail.
+- **decider** (fable, **no tools**) — the executive. Hand it a compacted decision brief and
+  it returns the judgment call. Never give it something to look up; see the analyst →
+  executive section below.
 - Built-ins as usual: `code-reviewer` before commits, `debugger` when the cause of a failure
   is unknown, `pr-author` for commit/PR text, `Explore` for very broad sweeps.
 

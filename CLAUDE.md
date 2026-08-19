@@ -70,15 +70,100 @@ lookup you can answer yourself in one or two tool calls — delegation has overh
 For big fan-outs (10+ agents, migrations, exhaustive audits), propose a Workflow with a
 rough cost estimate and let me approve it.
 
-### Dedicated planner agent for complex tasks
+### Analyst → executive: Opus gathers and compacts, Fable decides
 
-Even when the active session model isn't Fable, run planning/orchestration for complex or
-multi-step tasks through Fable specifically. Before executing, spawn an agent via the Agent
-tool with `model: "fable"` to decompose the task and decide the delegation plan (which
-subagents, what order, what's parallel vs sequential). The session model then handles
-synthesis, talks to me, and dispatches the scout/executor/verifier subagents per that plan.
-Skip this extra pass for simple, single-step requests — only tasks complex enough to need
-real decomposition warrant it.
+Model the way a good staff works with a busy principal. **Opus (the orchestrating session)
+is the analyst**: it owns *all* context gathering, verifies what it finds, and compacts it
+into a decision brief. **Fable is the executive**: it holds **no tools**, reads the brief,
+and answers the questions that genuinely require judgment. An executive who has to go
+digging through the filing cabinet was handed a bad memo.
+
+This inverts the old rule (which sent Fable off to plan with full tool access). The reason
+is cost shape, not taste: an agent's cost is **quadratic in its turn count**, because every
+tool result is appended to its context and re-sent on every later turn. Letting the most
+expensive model run a 20-turn exploration loop is the single largest source of waste.
+Gathering is cheap work; deciding is expensive work. Don't pay decision prices for it.
+
+**Who does what**
+
+- **Opus (analyst / this session)** — reads, greps, runs commands, dispatches haiku scouts
+  for mechanical fan-out, reconciles conflicts, and *writes the brief*. Accountable for the
+  brief's accuracy: never forward raw material you haven't checked, and never forward raw
+  material at all when a summary will do.
+- **Fable (executive, via `decider`)** — no tools, one turn, judgment only: ambiguous
+  trade-offs, decomposition under real uncertainty, "is this the right thing to build",
+  "which of these three approaches", one-way-door calls. It returns a decision, not an
+  investigation.
+- **sonnet (executor)** — carries out the decision. **haiku (scout/verifier)** — recon and
+  gates. Unchanged.
+
+**The decision brief** — what Opus hands Fable. Self-contained, no file paths to chase:
+
+1. **Decision requested** — the actual question, phrased as a choice. Not "review this."
+2. **Options** — the candidate answers already identified, with the case for each.
+3. **Evidence** — compacted findings with `file:line` anchors and short excerpts. Enough to
+   decide, and nothing more.
+4. **Constraints** — invariants, prior decisions, deadlines that bound the answer.
+5. **Already ruled out** — and why, so Fable doesn't re-derive dead ends.
+6. **Output contract** — the exact shape of the decision expected back.
+
+**The insufficiency callback** — what keeps this safe. A tool-less executive must never
+guess from a thin memo. If the brief can't support the decision, `decider` returns
+`INSUFFICIENT: <precisely what is missing>` and nothing else. Opus then goes and gets that,
+re-briefs, and re-asks. A second round-trip on a tool-less agent is far cheaper than one
+tool loop, and it protects the quality bar instead of trading it away.
+
+**Hard rules**
+
+- **Never give a Fable agent tools.** If it needs to look something up, the brief was wrong
+  — fix the brief, not the tool grant.
+- **Never `subagent_type: "fork"` for a decision.** A fork copies the entire conversation
+  *and* forces the parent's model, so it is both the most expensive possible handoff and
+  cannot be Fable anyway.
+- **Skip the executive pass when there is no real ambiguity.** A written spec already
+  exists, or there's one obvious approach → just build it. Fable is for judgment, not for
+  ceremony. This gate matters: "complex or multi-step" describes most tasks and firing on
+  all of them is how the old rule got expensive.
+- **Decide once.** Persist the decision (a plan file, a `D-###`, the PR body) and let
+  executors read it. Never re-open a settled call in a later stage.
+
+### Dynamic workflows — the same architecture in script form
+
+A `Workflow` script must express the analyst→executive split as distinct stage kinds.
+The stage kind, not the prompt, is what keeps the cost shape right:
+
+- **gather** — tools ON, cheapest capable model, `schema`-validated. Returns *findings*
+  (claims + `file:line` anchors), never raw file contents.
+- **compact** — the one barrier that is genuinely justified: you need every gather result
+  together to write one brief. Do it in plain script code when it's mechanical; use one
+  opus agent when the synthesis itself needs judgment.
+- **decide** — one turn, no tools, Fable. **Must be `agentType: 'decider'`.** A bare
+  `{model: 'fable'}` override changes *who thinks* but leaves the default workflow
+  subagent's full tool set in place — the model override alone does not carry the no-tools
+  guarantee. `schema` forces the output shape; `agentType` forces the empty hands.
+- **execute** — sonnet, tools ON, given the decision object.
+
+```js
+const brief = compactIntoBrief(await parallel(QUESTIONS.map(q => () =>   // gather + compact
+  agent(q.prompt, {label: `gather:${q.key}`, phase: 'Gather', schema: FINDINGS, effort: 'low'}))))
+
+const decision = await agent(brief, {                                     // decide
+  agentType: 'decider', model: 'fable', schema: DECISION, phase: 'Decide', effort: 'high',
+})
+
+if (decision.status === 'INSUFFICIENT') { /* gather what it named, re-brief, re-ask */ }
+
+await pipeline(decision.steps,                                            // execute
+  s => agent(s.spec, {phase: 'Build', model: 'sonnet'}),
+  (built, s) => agent(`Verify: ${s.check}`, {phase: 'Verify', model: 'haiku'}))
+```
+
+Tier `effort` as deliberately as `model` — they multiply. `'low'` for gather and mechanical
+stages, `'high'` only on the decide stage, `'max'` reserved for genuinely hard calls.
+Reasoning bills as output tokens, so effort on a wide fan-out stage is expensive twice over.
+
+When iterating on a workflow script, resume with `resumeFromRunId` — unchanged `agent()`
+calls replay from cache, so a decision you already paid for is free on the next run.
 
 ### Context management (orchestrator's judgment, not a fixed threshold)
 

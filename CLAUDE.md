@@ -147,8 +147,9 @@ The stage kind, not the prompt, is what keeps the cost shape right:
 - **execute** — sonnet, tools ON, given the decision object.
 
 ```js
-const brief = compactIntoBrief(await parallel(QUESTIONS.map(q => () =>   // gather + compact
-  agent(q.prompt, {label: `gather:${q.key}`, phase: 'Gather', schema: FINDINGS, effort: 'low'}))))
+const found = await parallel(QUESTIONS.map(q => () =>                    // gather
+  agent(q.prompt, {label: `gather:${q.key}`, phase: 'Gather', schema: FINDINGS, effort: 'low'})))
+const brief = compactIntoBrief(found.filter(Boolean))                    // compact (barrier earns itself)
 
 const decision = await agent(brief, {                                     // decide
   agentType: 'decider', model: 'fable', schema: DECISION, phase: 'Decide', effort: 'high',
